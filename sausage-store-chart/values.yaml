@@ -44,8 +44,10 @@ backend:
     port: 8080
   revisionHistoryLimit: 15
   replicas: 1
-  strategy:
   ### Опишите стратегию RollingUpdate для бэкенда
+  strategy:
+    type: RollingUpdate
+    maxUnavailable: "50%" # kinda useless with replicas: 1
   image: YOUR_DOCKERHUB/sausage-backend:latest
   imagePullPolicy: Always
   resources:
@@ -56,10 +58,16 @@ backend:
       memory: "512Mi"
       cpu: "1"
   containerPort: 8080
-  livenessProbe:
   ### Опишите LivenessProbe для бэкенда
-  vpa:
+  livenessProbe:
+    httpGet:
+      path: /actuator/health
+      port: 8080
+    initialDelaySeconds: 30
   ### Опишите VPA для бэкенда
+  vpa:
+    enabled: true
+    updateMode: "Off" # only recomendations
 
 backend-report:
 ### Опишите значения для backend-report
@@ -68,9 +76,32 @@ backend-report:
 ### DB положите в Secret, PORT в ConfigMap
 ### Опишите HPA для backend-report
 
+  replicas: 1
+  revisionHistoryLimit: 15
+  strategy:
+    type: Recreate
+  service:
+    port: 8080
+  image: YOUR_DOCKERHUB/sausage-backend-report:latest
+  imagePullPolicy: Always
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "1"
+  containerPort: 8080
+  ## TODO: see above
+
 infra:
   postgresql:
   ### Опишите необходимые переменные для развертывания PostgresQL в кластере Kubernetes
+    containerPort: 5432
+    env:
+      POSTGRES_USER: store
+      POSTGRES_PASSWORD: storepassword
+      POSTGRES_DB: sausage-store
   mongodb:
     env:
       MONGO_INITDB_ROOT_USERNAME: root
