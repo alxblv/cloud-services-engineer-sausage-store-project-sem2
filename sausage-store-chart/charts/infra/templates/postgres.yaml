@@ -29,9 +29,11 @@ spec:
             cpu: "50m"
           limits:
             memory: "256Mi"
+            cpu: "500m"
         volumeMounts:
         - name: postgres-data
           mountPath: /var/lib/postgresql/data
+          subPath: postgres-db-files # workaround for initdb: error: directory "/var/lib/postgresql/data" exists but is not empty
   volumeClaimTemplates:
   - metadata:
       name: postgres-data
@@ -60,6 +62,6 @@ kind: ConfigMap
 metadata:
   name: postgres-conf
 data:
-  POSTGRES_DB: {{ .Values.postgresql.env.POSTGRES_DB }}
-  POSTGRES_USER: {{ .Values.postgresql.env.POSTGRES_USER }}
-  POSTGRES_PASSWORD: {{ .Values.postgresql.env.POSTGRES_PASSWORD }}
+  POSTGRES_DB: {{ .Values.postgresql.env.POSTGRES_DB | quote }}
+  POSTGRES_USER: {{ .Values.postgresql.env.POSTGRES_USER | quote }}
+  POSTGRES_PASSWORD: {{ .Values.postgresql.env.POSTGRES_PASSWORD | quote }}

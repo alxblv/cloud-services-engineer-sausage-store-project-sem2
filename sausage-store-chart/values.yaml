@@ -15,11 +15,11 @@ frontend:
   service:
     port: 80
   ingress:
-    host: YOUR_STUDENT_HOSTNAME.students-projects.ru # Корректный домен будет указан в задании
+    host: front-alxblv.2sem.students-projects.ru # Корректный домен будет указан в задании 
     path: /
     pathType: Prefix
   containerPort: 80
-  image: YOUR_DOCKERHUB/sausage-frontend:latest
+  image: alxblv/sausage-frontend:latest
   resources:
     requests:
       memory: "128Mi"
@@ -35,7 +35,7 @@ backend:
     port: "8080"
     scrape: "true"
   env:
-    postgresUri: jdbc:postgresql://postgresql:5432/sausage-store
+    postgresUri: jdbc:postgresql://postgres:5432/sausage-store
     postgresUser: store
     postgresPassword: storepassword
     reportPath: /logs/reports
@@ -47,8 +47,8 @@ backend:
   ### Опишите стратегию RollingUpdate для бэкенда
   strategy:
     type: RollingUpdate
-    maxUnavailable: "50%" # kinda useless with replicas: 1
-  image: YOUR_DOCKERHUB/sausage-backend:latest
+    #maxUnavailable: "50%" # kinda useless with replicas: 1
+  image: alxblv/sausage-backend:latest
   imagePullPolicy: Always
   resources:
     requests:
@@ -80,9 +80,12 @@ backend-report:
   revisionHistoryLimit: 15
   strategy:
     type: Recreate
+  env:
+    port: 8080
+    db: mongodb://root:rootpassword@mongodb:27017/sausage-store?authSource=admin
   service:
     port: 8080
-  image: YOUR_DOCKERHUB/sausage-backend-report:latest
+  image: alxblv/sausage-backend-report:latest
   imagePullPolicy: Always
   resources:
     requests:
@@ -90,7 +93,7 @@ backend-report:
       cpu: "100m"
     limits:
       memory: "512Mi"
-      cpu: "1"
+      cpu: "250m"
   containerPort: 8080
   ## TODO: see above
 
