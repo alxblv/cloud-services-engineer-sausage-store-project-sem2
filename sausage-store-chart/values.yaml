@@ -98,7 +98,10 @@ backend-report:
       memory: "512Mi"
       cpu: "250m"
   containerPort: 8080
-  ## TODO: see above
+  hpa:
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 75
 
 infra:
   postgresql:
