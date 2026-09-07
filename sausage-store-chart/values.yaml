@@ -1,9 +1,10 @@
 global:
   imagePullPolicy: Always
-  ###vault:
-  ###  host: ip
-  ###  name: vault
-  ###  vaultToken: someToken
+  vault:
+    host: 158.160.31.54:8201
+    name: my-vault
+    # overwritten by --set-string global.vault.vaultToken in github actions
+    vaultToken: ""
 
 
 frontend:
