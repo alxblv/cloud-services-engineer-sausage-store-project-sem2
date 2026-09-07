@@ -69,7 +69,6 @@ backend:
     failureThreshold: 2
   ### Опишите VPA для бэкенда
   vpa:
-    enabled: true
     updateMode: "Off" # only recomendations
 
 backend-report:
